@@ -29,11 +29,6 @@ class Solution_DynamicProgramming:
 
         return sum( min(left_max[i],right_max[i])-height[i] for i in range(n))
 
-height = [0,1,0,2,1,0,1,3,2,1,2,1]
-solution = Solution_DynamicProgramming()
-print(solution.trap(height))
-
-
 """:单调栈
 除了计算并存储每个位置两边的最大高度以外，也可以用单调栈计算能接的水的总量。
 维护一个单调栈，单调栈存储的是下标，满足从栈底到栈顶的下标对应的数组 height 中的元素递减。
@@ -46,9 +41,25 @@ class Solution_MonotonicStack:
     def trap(self,height:List[int])-> int:
         if not height:
             return 0
+        res = 0
+        stack = list()
+        n = len(height)
+
+        for index, value in enumerate(height):
+            while stack and value > height[stack[-1]]:
+                top = stack.pop()
+                if not stack:
+                    break
+                left = stack[-1]
+                currWidth = index - left - 1
+                currHeight = min(height[left], height[index]) - height[top]
+                res += currWidth * currHeight
+            stack.append(index)
+        return res
+
 
 """:双指针
-
+双指针，分别从左右出发，谁小谁动，直至将小的一侧的所有比较大的所有点都过完，最终指针汇聚在最高点。
 复杂度分析：
 时间复杂度：O(n)，其中 n 是数组 height 的长度。两个指针的移动总次数不超过 n。
 空间复杂度：O(1)。只需要使用常数的额外空间。
@@ -59,4 +70,29 @@ class Solution_DoublePointer:
         if not height:
             return 0
 
+        left,right = 0, len(height)-1
+        leftmax, rightmax = 0, 0
+        res = 0
 
+        while left < right :
+            leftmax = max(leftmax,height[left])
+            rightmax = max(rightmax,height[right])
+            if height[left] < height[right]:
+                res += leftmax-height[left]
+                left += 1
+            else:
+                res += rightmax-height[right]
+                right -= 1
+        return res
+
+
+height = [0,1,0,2,1,0,1,3,2,1,2,1]
+# height = [5,1,2,1]
+solution1 = Solution_DynamicProgramming()
+print(solution1.trap(height))
+
+solution2 = Solution_MonotonicStack()
+print(solution2.trap(height))
+
+solution3 = Solution_DoublePointer()
+print(solution3.trap(height))
