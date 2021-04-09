@@ -56,7 +56,7 @@ y = boston.target
 feature_names = boston.feature_names
 print("feature_names:",feature_names)
 
-X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.3)
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.3,random_state=0)
 print("train data's shape:",X_train.shape)
 print("test data's shape:",X_test.shape)
 
